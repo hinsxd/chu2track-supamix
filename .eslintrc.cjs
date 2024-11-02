@@ -24,25 +24,31 @@ module.exports = {
   // Base config
   extends: ["eslint:recommended"],
 
-  plugins: ["unused-imports"],
-  rules: {
-    "unused-imports/no-unused-imports": "error",
-    "unused-imports/no-unused-vars": "warn",
-    "tailwindcss/no-custom-classname": "off",
-  },
   overrides: [
     // React
     {
       files: ["**/*.{js,jsx,ts,tsx}"],
-      plugins: ["react", "jsx-a11y", "tailwindcss"],
+      parser: "@typescript-eslint/parser",
+      plugins: [
+        "@typescript-eslint",
+        "import",
+        "react",
+        "jsx-a11y",
+        "tailwindcss",
+        "unused-imports",
+      ],
       extends: [
+        "plugin:@typescript-eslint/recommended",
         "plugin:react/recommended",
         "plugin:react/jsx-runtime",
         "plugin:react-hooks/recommended",
         "plugin:jsx-a11y/recommended",
+        "plugin:import/recommended",
+        "plugin:import/typescript",
         "plugin:tailwindcss/recommended",
       ],
       settings: {
+        "import/internal-regex": "^~/",
         react: {
           version: "detect",
         },
@@ -58,30 +64,22 @@ module.exports = {
           callees: ["classnames", "clsx", "ctl", "cva", "tv", "cn"],
         },
       },
-    },
-
-    // Typescript
-    {
-      files: ["**/*.{ts,tsx}"],
-      plugins: ["@typescript-eslint", "import"],
-      parser: "@typescript-eslint/parser",
-      settings: {
-        "import/internal-regex": "^~/",
-        "import/resolver": {
-          node: {
-            extensions: [".ts", ".tsx"],
-          },
-          typescript: {
-            alwaysTryTypes: true,
-          },
-        },
-      },
-      extends: [
-        "plugin:@typescript-eslint/recommended",
-        "plugin:import/recommended",
-        "plugin:import/typescript",
-      ],
       rules: {
+        "tailwindcss/no-custom-classname": "off",
+        "react/prop-types": "off",
+        "jsx-a11y/anchor-has-content": "off",
+        "jsx-a11y/heading-has-content": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "unused-imports/no-unused-imports": "error",
+        "unused-imports/no-unused-vars": [
+          "warn",
+          {
+            vars: "all",
+            varsIgnorePattern: "^_",
+            args: "after-used",
+            argsIgnorePattern: "^_",
+          },
+        ],
         "import/order": [
           "warn",
           {
@@ -124,6 +122,7 @@ module.exports = {
             warnOnUnassignedImports: false,
           },
         ],
+        "react/no-unknown-property": "off",
       },
     },
 
