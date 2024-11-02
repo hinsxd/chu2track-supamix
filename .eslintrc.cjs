@@ -24,16 +24,23 @@ module.exports = {
   // Base config
   extends: ["eslint:recommended"],
 
+  plugins: ["unused-imports"],
+  rules: {
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": "warn",
+    "tailwindcss/no-custom-classname": "off",
+  },
   overrides: [
     // React
     {
       files: ["**/*.{js,jsx,ts,tsx}"],
-      plugins: ["react", "jsx-a11y"],
+      plugins: ["react", "jsx-a11y", "tailwindcss"],
       extends: [
         "plugin:react/recommended",
         "plugin:react/jsx-runtime",
         "plugin:react-hooks/recommended",
         "plugin:jsx-a11y/recommended",
+        "plugin:tailwindcss/recommended",
       ],
       settings: {
         react: {
@@ -46,6 +53,9 @@ module.exports = {
         ],
         "import/resolver": {
           typescript: {},
+        },
+        tailwindcss: {
+          callees: ["classnames", "clsx", "ctl", "cva", "tv", "cn"],
         },
       },
     },
@@ -71,6 +81,50 @@ module.exports = {
         "plugin:import/recommended",
         "plugin:import/typescript",
       ],
+      rules: {
+        "import/order": [
+          "warn",
+          {
+            pathGroupsExcludedImportTypes: ["builtin"],
+            groups: [
+              "builtin",
+              "external",
+              "internal",
+              "unknown",
+              "parent",
+              "sibling",
+              "index",
+              "object",
+              "type",
+            ],
+            "newlines-between": "always",
+            distinctGroup: true,
+            named: true,
+            pathGroups: [
+              {
+                group: "internal",
+                pattern: "~/**",
+              },
+              {
+                group: "builtin",
+                pattern: "react",
+                position: "before",
+              },
+              {
+                group: "builtin",
+                pattern: "@remix-run/*",
+                position: "before",
+              },
+            ],
+            alphabetize: {
+              order:
+                "asc" /* sort in ascending order. Options: ['ignore', 'asc', 'desc'] */,
+              caseInsensitive: true /* ignore case. Options: [true, false] */,
+            },
+            warnOnUnassignedImports: false,
+          },
+        ],
+      },
     },
 
     // Node
