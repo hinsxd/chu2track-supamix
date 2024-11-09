@@ -36,6 +36,7 @@ module.exports = {
         "jsx-a11y",
         "tailwindcss",
         "unused-imports",
+        "prettier",
       ],
       extends: [
         "plugin:@typescript-eslint/recommended",
@@ -46,6 +47,7 @@ module.exports = {
         "plugin:import/recommended",
         "plugin:import/typescript",
         "plugin:tailwindcss/recommended",
+        "plugin:prettier/recommended",
       ],
       settings: {
         "import/internal-regex": "^~/",
@@ -65,6 +67,7 @@ module.exports = {
         },
       },
       rules: {
+        "prettier/prettier": "warn",
         "tailwindcss/no-custom-classname": "off",
         "react/prop-types": "off",
         "jsx-a11y/anchor-has-content": "off",
