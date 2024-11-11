@@ -1,8 +1,8 @@
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import { LoaderFunctionArgs, MetaFunction } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 
-import { getOrm } from "~/db.server";
-import { Song } from "~/db.server/entities/song.entity";
+import { Song } from "~/.server/db/entities/song.entity";
+import { withOrm } from "~/.server/db/withOrm";
 
 export const meta: MetaFunction = () => {
   return [
@@ -11,14 +11,19 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export const loader = async ({ request, context }: LoaderFunctionArgs) => {
-  console.log(context);
-  const orm = await getOrm();
+export const loader = withOrm(
+  async (orm, { request, context }: LoaderFunctionArgs) => {
+    await orm.insert(Song, {
+      songId: Date.now().toString(),
+      category: "Pop",
+      title: "Song 1",
+      artist: "Artist 1",
+    });
+    const songs = await orm.findAll(Song);
 
-  const songs = await orm.findAll(Song);
-
-  return { songs };
-};
+    return { songs };
+  }
+);
 
 export default function Index() {
   const { songs } = useLoaderData<typeof loader>();

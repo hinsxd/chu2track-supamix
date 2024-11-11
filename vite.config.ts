@@ -6,6 +6,8 @@ import {
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
+import { getLoadContext } from "./load-context";
+
 declare module "@remix-run/cloudflare" {
   interface Future {
     v3_singleFetch: true;
@@ -14,7 +16,7 @@ declare module "@remix-run/cloudflare" {
 
 export default defineConfig({
   plugins: [
-    remixCloudflareDevProxy(),
+    remixCloudflareDevProxy({ getLoadContext }),
     remix({
       future: {
         v3_fetcherPersist: true,

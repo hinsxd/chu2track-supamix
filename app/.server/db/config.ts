@@ -3,18 +3,17 @@ import { Options, PostgreSqlDriver } from "@mikro-orm/postgresql";
 import { TsMorphMetadataProvider } from "@mikro-orm/reflection";
 
 import { Song } from "./entities/song.entity.js";
+
 export const config: Options = {
   driver: PostgreSqlDriver,
-
   entities: [Song],
-
-  dbName: process.env.MIKRO_ORM_DATABASE_NAME,
-  schema: process.env.MIKRO_ORM_DATABASE_SCHEMA,
-  user: process.env.MIKRO_ORM_DATABASE_USERNAME,
-  password: process.env.MIKRO_ORM_DATABASE_PASSWORD,
-  host: process.env.MIKRO_ORM_DATABASE_HOST,
+  dbName: process.env.DATABASE_NAME,
+  user: process.env.DATABASE_USERNAME,
+  password: process.env.DATABASE_PASSWORD,
+  host: process.env.DATABASE_HOST,
   metadataProvider: TsMorphMetadataProvider,
   extensions: [Migrator],
+  schema: "public",
 };
-console.log(config);
+
 export default config;

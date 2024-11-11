@@ -11,9 +11,9 @@
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "lint:fix": "npm run lint -- --fix",
     "typecheck": "tsc",
-    "migrate:diff": "supabase db diff -f",
-    "migrate:deploy": "supabase migration up --linked",
-    "gen:types": "supabase gen types --local > app/lib/database.types.ts"
+    "migrate:create": "dotenv -e .dev.vars -- mikro-orm-esm --config app/.server/db/config.ts migration:create",
+    "migrate:up:dev": "dotenv -e .dev.vars -- mikro-orm-esm --config app/.server/db/config.ts migration:up",
+    "migrate:up:prod": "dotenv -e .prod.vars -- mikro-orm-esm --config app/.server/db/config.ts migration:up"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -85,6 +85,7 @@
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
     "autoprefixer": "^10.4.19",
+    "dotenv-cli": "^7.4.2",
     "eslint": "^8.38.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",
@@ -109,8 +110,8 @@
   },
   "mikro-orm": {
     "configPaths": [
-      "./app/db.server/entities/*.entity.js",
-      "./app/db.server/entities/*.entity.ts"
+      "./app/.server/db/entities/*.entity.js",
+      "./app/.server/db/entities/*.entity.ts"
     ]
   }
 }

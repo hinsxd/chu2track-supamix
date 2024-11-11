@@ -1,8 +1,8 @@
 {
   "namespaces": [
-    "dev"
+    "public"
   ],
-  "name": "dev",
+  "name": "public",
   "tables": [
     {
       "columns": {
@@ -88,7 +88,7 @@
         }
       },
       "name": "song",
-      "schema": "dev",
+      "schema": "public",
       "indexes": [
         {
           "keyName": "song_pkey",
