@@ -2,7 +2,7 @@ import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
 
 @Entity()
 export class Song {
-  @PrimaryKey()
+  @PrimaryKey({ type: "string" })
   songId!: string;
 
   @Property()
