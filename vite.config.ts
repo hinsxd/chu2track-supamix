@@ -1,9 +1,12 @@
-import { vitePlugin as remix } from "@remix-run/dev";
+import {
+  cloudflareDevProxyVitePlugin as remixCloudflareDevProxy,
+  vitePlugin as remix,
+} from "@remix-run/dev";
 
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-declare module "@remix-run/node" {
+declare module "@remix-run/cloudflare" {
   interface Future {
     v3_singleFetch: true;
   }
@@ -11,6 +14,7 @@ declare module "@remix-run/node" {
 
 export default defineConfig({
   plugins: [
+    remixCloudflareDevProxy(),
     remix({
       future: {
         v3_fetcherPersist: true,
