@@ -10,9 +10,6 @@ declare module "@remix-run/node" {
 }
 
 export default defineConfig({
-  build: {
-    minify: false,
-  },
   plugins: [
     remix({
       future: {
