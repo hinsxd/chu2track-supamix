@@ -5,20 +5,20 @@ export class Song {
   @PrimaryKey({ type: "string" })
   songId!: string;
 
-  @Property()
+  @Property({ type: "string" })
   category!: string;
-  @Property()
+  @Property({ type: "string" })
   title!: string;
-  @Property()
+  @Property({ type: "string" })
   artist!: string;
 
-  @Property({ nullable: true })
+  @Property({ type: "string", nullable: true })
   imageName?: string;
-  @Property({ nullable: true })
+  @Property({ type: "string", nullable: true })
   imageUrl?: string;
 
-  @Property({ nullable: true })
+  @Property({ type: "string", nullable: true })
   version?: string;
-  @Property({ nullable: true })
+  @Property({ type: "date", nullable: true })
   releaseDate?: Date;
 }
