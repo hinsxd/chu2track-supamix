@@ -16,6 +16,9 @@ export const config: Options = {
   extensions: [Migrator],
   schema: "public",
   discovery: { disableDynamicFileAccess: true },
+  entityGenerator: {
+    scalarTypeInDecorator: true,
+  },
 };
 
 export default config;
