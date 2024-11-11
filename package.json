@@ -16,6 +16,9 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
+    "@mikro-orm/core": "^6.3.13",
+    "@mikro-orm/postgresql": "^6.3.13",
+    "@mikro-orm/reflection": "^6.3.13",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -69,6 +72,9 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@mikro-orm/cli": "^6.3.13",
+    "@mikro-orm/entity-generator": "^6.3.13",
+    "@mikro-orm/migrations": "^6.3.13",
     "@remix-run/dev": "^2.13.1",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
@@ -88,11 +94,18 @@
     "postcss": "^8.4.38",
     "supabase": "^1.219.2",
     "tailwindcss": "^3.4.4",
+    "ts-node": "^10.9.2",
     "typescript": "^5.1.6",
     "vite": "^5.1.0",
     "vite-tsconfig-paths": "^4.2.1"
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "mikro-orm": {
+    "configPaths": [
+      "./app/db.server/entities/*.entity.js",
+      "./app/db.server/entities/*.entity.ts"
+    ]
   }
 }
