@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs } from "@remix-run/cloudflare";
+import { LoaderFunctionArgs } from "@remix-run/node";
 
 import { MikroORM } from "@mikro-orm/postgresql"; // or any other driver package
 
@@ -13,10 +13,6 @@ export async function getOrm(args?: LoaderFunctionArgs) {
   if (global.orm) return global.orm.em.fork();
   global.orm = await MikroORM.init({
     ...config,
-    dbName: args?.context.cloudflare.env.DATABASE_NAME,
-    user: args?.context.cloudflare.env.DATABASE_USERNAME,
-    password: args?.context.cloudflare.env.DATABASE_PASSWORD,
-    host: args?.context.cloudflare.env.DATABASE_HOST,
   });
   return global.orm.em.fork();
 }
