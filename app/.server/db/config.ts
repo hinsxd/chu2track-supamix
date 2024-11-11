@@ -14,6 +14,7 @@ export const config: Options = {
   metadataProvider: TsMorphMetadataProvider,
   extensions: [Migrator],
   schema: "public",
+  discovery: { disableDynamicFileAccess: true },
 };
 
 export default config;
