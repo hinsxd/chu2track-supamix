@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { Migrator } from "@mikro-orm/migrations";
 import { Options, PostgreSqlDriver } from "@mikro-orm/postgresql";
 import { TsMorphMetadataProvider } from "@mikro-orm/reflection";
