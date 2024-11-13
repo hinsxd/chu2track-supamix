@@ -28,7 +28,7 @@ export class Highscore {
   @Property({ type: "boolean" })
   fullCombo!: boolean;
 
-  @Property({ type: "number" })
+  @Property({ type: "integer", columnType: "integer" })
   score!: number;
 
   @Property({
@@ -36,7 +36,7 @@ export class Highscore {
     nullable: true,
     columnType: "numeric(10,2)",
   })
-  rating?: number | null;
+  rating?: string | null;
 
   @ManyToOne("Song", {
     joinColumns: ["song_id"],

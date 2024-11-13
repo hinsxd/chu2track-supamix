@@ -334,7 +334,7 @@
         },
         "score": {
           "name": "score",
-          "type": "int",
+          "type": "integer",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,

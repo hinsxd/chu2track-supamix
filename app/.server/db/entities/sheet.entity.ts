@@ -26,7 +26,7 @@ export class Sheet {
     columnType: "numeric(10,2)",
     nullable: true,
   })
-  levelValue?: number | null;
+  levelValue?: string | null;
 
   @Property({ type: "string", nullable: true })
   internalLevel?: string | null;
@@ -36,7 +36,7 @@ export class Sheet {
     columnType: "numeric(10,2)",
     nullable: true,
   })
-  internalLevelValue?: number | null;
+  internalLevelValue?: string | null;
 
   @Property({ type: "string", nullable: true })
   noteDesigner?: string | null;
