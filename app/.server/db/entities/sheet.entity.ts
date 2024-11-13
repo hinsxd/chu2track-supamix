@@ -1,6 +1,5 @@
 import {
   Entity,
-  Formula,
   ManyToOne,
   PrimaryKey,
   PrimaryKeyProp,
@@ -19,13 +18,21 @@ export class Sheet {
   @Property({ type: "string", nullable: true })
   level?: string | null;
 
-  @Formula(`CAST(level as DECIMAL)`)
+  @Property({
+    type: "decimal",
+    columnType: "numeric(10,2)",
+    nullable: true,
+  })
   levelValue?: number | null;
 
   @Property({ type: "string", nullable: true })
   internalLevel?: string | null;
 
-  @Formula(`CAST(internalLevel as DECIMAL)`)
+  @Property({
+    type: "decimal",
+    columnType: "numeric(10,2)",
+    nullable: true,
+  })
   internalLevelValue?: number | null;
 
   @Property({ type: "string", nullable: true })

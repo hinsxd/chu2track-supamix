@@ -10,6 +10,8 @@ import type { EntityManager } from "@mikro-orm/core";
 export class DatabaseSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     const d = data as types.Data;
+    await em.nativeDelete(entities.Sheet, {});
+    await em.nativeDelete(entities.Song, {});
 
     await em.upsertMany(
       entities.Song,
@@ -41,7 +43,17 @@ export class DatabaseSeeder extends Seeder {
               song: song.songId as any,
               difficulty,
               level,
+              levelValue: level
+                ? level.includes("☆")
+                  ? level.length + 100
+                  : Number.isNaN(Number(level.replace("+", ".5")))
+                    ? null
+                    : level.replace("+", ".5")
+                : null,
               internalLevel,
+              internalLevelValue: internalLevel
+                ? Number(internalLevel?.replace("+", ".5"))
+                : null,
               noteDesigner,
               // isNew: sheet.isNew,
               // isLocked: sheet.isLocked,
