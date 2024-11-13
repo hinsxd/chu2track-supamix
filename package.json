@@ -13,8 +13,8 @@
     "migrate:create": "dotenv -e .env -- mikro-orm-esm migration:create --config app/.server/db/config.ts",
     "migrate:up:dev": "dotenv -e .env -- mikro-orm-esm migration:up --config app/.server/db/config.ts",
     "migrate:up:prod": "dotenv -e .env.prod -- mikro-orm-esm migration:up --config app/.server/db/config.ts",
-    "seeder:create": "dotenv -e .env -- mikro-orm-esm seeder:create DatabaseSeeder --config app/.server/db/config.ts",
-    "seeder:run": "dotenv -e .env -- mikro-orm-esm seeder:run --config app/.server/db/config.ts"
+    "seeder:run:dev": "dotenv -e .env -- mikro-orm-esm seeder:run --config app/.server/db/config.ts",
+    "seeder:run:prod": "dotenv -e .env -- mikro-orm-esm seeder:run --config app/.server/db/config.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
