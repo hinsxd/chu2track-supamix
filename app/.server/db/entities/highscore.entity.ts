@@ -1,27 +1,29 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import {
+  Entity,
+  ManyToOne,
+  PrimaryKey,
+  PrimaryKeyProp,
+  Property,
+} from "@mikro-orm/core";
 
 import { Sheet } from "./sheet.entity.js";
 import { Song } from "./song.entity.js";
 
 @Entity()
 export class Highscore {
+  [PrimaryKeyProp]?: ["difficulty", "type", "songId"];
+
   @PrimaryKey({ type: "string" })
-  id!: string;
+  difficulty!: string;
 
-  @Property({ type: "string" })
+  @PrimaryKey({ type: "string" })
   type!: string;
-
-  @Property({ type: "string" })
-  title!: string;
 
   @Property({ type: "boolean" })
   allJustice!: boolean;
 
   @Property({ type: "boolean" })
   clear!: boolean;
-
-  @Property({ type: "string" })
-  difficulty!: string;
 
   @Property({ type: "boolean" })
   fullCombo!: boolean;
@@ -38,7 +40,9 @@ export class Highscore {
 
   @ManyToOne("Song", {
     joinColumns: ["song_id"],
+    referencedColumnNames: ["song_id"],
     nullable: true,
+    primary: true,
   })
   song?: Song | null;
 

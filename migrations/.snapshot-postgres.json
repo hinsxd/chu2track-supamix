@@ -275,8 +275,8 @@
     },
     {
       "columns": {
-        "id": {
-          "name": "id",
+        "difficulty": {
+          "name": "difficulty",
           "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
@@ -295,13 +295,13 @@
           "length": 255,
           "mappedType": "string"
         },
-        "title": {
-          "name": "title",
+        "song_id": {
+          "name": "song_id",
           "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": 255,
           "mappedType": "string"
         },
@@ -322,16 +322,6 @@
           "primary": false,
           "nullable": false,
           "mappedType": "boolean"
-        },
-        "difficulty": {
-          "name": "difficulty",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
         },
         "full_combo": {
           "name": "full_combo",
@@ -361,16 +351,6 @@
           "precision": 10,
           "scale": 2,
           "mappedType": "decimal"
-        },
-        "song_id": {
-          "name": "song_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 255,
-          "mappedType": "string"
         }
       },
       "name": "highscore",
@@ -379,9 +359,11 @@
         {
           "keyName": "highscore_pkey",
           "columnNames": [
-            "id"
+            "difficulty",
+            "type",
+            "song_id"
           ],
-          "composite": false,
+          "composite": true,
           "constraint": true,
           "primary": true,
           "unique": true

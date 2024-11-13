@@ -7,7 +7,7 @@ import * as types from "./types.js";
 
 import type { EntityManager } from "@mikro-orm/core";
 
-export class DatabaseSeeder extends Seeder {
+export class SongsSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     const d = data as types.Data;
     await em.nativeDelete(entities.Sheet, {});
