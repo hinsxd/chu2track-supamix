@@ -10,6 +10,7 @@ import type { EntityManager } from "@mikro-orm/core";
 export class DatabaseSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     const d = data as types.Data;
+
     await em.upsertMany(
       entities.Song,
       d.songs.map((song) => ({
@@ -30,13 +31,14 @@ export class DatabaseSeeder extends Seeder {
     await em.upsertMany(
       entities.Sheet,
       d.songs
+
         .map((song) => {
           const sheets = song.sheets.map((sheet) => {
             const { type, difficulty, level, internalLevel, noteDesigner } =
               sheet;
             return {
-              songId: song.songId,
               type,
+              song: song.songId as any,
               difficulty,
               level,
               internalLevel,
@@ -49,7 +51,11 @@ export class DatabaseSeeder extends Seeder {
 
           return sheets;
         })
-        .flat()
+        .flat(),
+      {
+        onConflictAction: "merge",
+        onConflictFields: ["song", "type", "difficulty"],
+      }
     );
   }
 }

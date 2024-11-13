@@ -73,6 +73,7 @@ module.exports = {
         "jsx-a11y/anchor-has-content": "off",
         "jsx-a11y/heading-has-content": "off",
         "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-explicit-any": "off",
         "unused-imports/no-unused-imports": "error",
         "unused-imports/no-unused-vars": [
           "warn",

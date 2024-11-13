@@ -1,5 +1,12 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+import {
+  Collection,
+  Entity,
+  OneToMany,
+  PrimaryKey,
+  Property,
+} from "@mikro-orm/core";
 
+import { Sheet } from "./sheet.entity.js";
 @Entity()
 export class Song {
   @PrimaryKey({ type: "string" })
@@ -23,4 +30,7 @@ export class Song {
   version?: string | null;
   @Property({ type: "date", nullable: true })
   releaseDate?: Date | null;
+
+  @OneToMany(() => Sheet, "song")
+  sheets = new Collection<Sheet>(this);
 }

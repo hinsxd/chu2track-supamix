@@ -1,16 +1,15 @@
 import {
   Entity,
   Formula,
+  ManyToOne,
   PrimaryKey,
   PrimaryKeyProp,
   Property,
 } from "@mikro-orm/core";
 
+import { Song } from "./song.entity.js";
 @Entity()
 export class Sheet {
-  @PrimaryKey({ type: "string" })
-  songId!: string;
-
   @PrimaryKey({ type: "string" })
   type!: string;
 
@@ -34,6 +33,13 @@ export class Sheet {
 
   @Property({ type: "boolean", default: false })
   isSpecial!: boolean;
+
+  @ManyToOne(() => Song, {
+    joinColumn: "song_id",
+    primary: true,
+    type: "string",
+  })
+  song!: Song;
 
   [PrimaryKeyProp]?: ["songId", "type", "difficulty"];
 }
