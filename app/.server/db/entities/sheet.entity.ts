@@ -1,11 +1,14 @@
 import {
+  Collection,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryKey,
   PrimaryKeyProp,
   Property,
 } from "@mikro-orm/core";
 
+import { Highscore } from "./highscore.entity.js";
 import { Song } from "./song.entity.js";
 @Entity()
 export class Sheet {
@@ -47,6 +50,9 @@ export class Sheet {
     type: "string",
   })
   song!: Song;
+
+  @OneToMany(() => Highscore, "sheet")
+  highscores = new Collection<Highscore>(this);
 
   [PrimaryKeyProp]?: ["songId", "type", "difficulty"];
 }

@@ -6,6 +6,7 @@ import {
   Property,
 } from "@mikro-orm/core";
 
+import { Highscore } from "./highscore.entity.js";
 import { Sheet } from "./sheet.entity.js";
 @Entity()
 export class Song {
@@ -33,4 +34,7 @@ export class Song {
 
   @OneToMany(() => Sheet, "song")
   sheets = new Collection<Sheet>(this);
+
+  @OneToMany(() => Highscore, "song")
+  highscores = new Collection<Highscore>(this);
 }
