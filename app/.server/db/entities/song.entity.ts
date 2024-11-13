@@ -11,14 +11,16 @@ export class Song {
   title!: string;
   @Property({ type: "string" })
   artist!: string;
+  @Property({ type: "number", nullable: true })
+  bpm?: number | null;
 
   @Property({ type: "string", nullable: true })
-  imageName?: string;
+  imageName?: string | null;
   @Property({ type: "string", nullable: true })
-  imageUrl?: string;
+  imageUrl?: string | null;
 
   @Property({ type: "string", nullable: true })
-  version?: string;
+  version?: string | null;
   @Property({ type: "date", nullable: true })
-  releaseDate?: Date;
+  releaseDate?: Date | null;
 }

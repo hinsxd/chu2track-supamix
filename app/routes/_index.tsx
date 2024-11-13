@@ -12,21 +12,16 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader = withOrm(
-  async (orm, { request, context }: LoaderFunctionArgs) => {
-    await orm.insert(Song, {
-      songId: Date.now().toString(),
-      category: "Pop",
-      title: "Song 1",
-      artist: "Artist 1",
-    });
+  async ({ request, context }: LoaderFunctionArgs, orm) => {
     const songs = await orm.findAll(Song);
 
-    return { songs };
+    return { songs, d: new Date() };
   }
 );
 
 export default function Index() {
-  const { songs } = useLoaderData<typeof loader>();
+  const { songs, d } = useLoaderData<typeof loader>();
+
   return (
     <div>
       {songs.map((song) => (

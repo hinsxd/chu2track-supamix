@@ -10,15 +10,18 @@
     "lint:fix": "npm run lint -- --fix",
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc",
-    "migrate:create": "dotenv -e .dev.vars -- mikro-orm-esm --config app/.server/db/config.ts migration:create",
-    "migrate:up:dev": "dotenv -e .dev.vars -- mikro-orm-esm --config app/.server/db/config.ts migration:up",
-    "migrate:up:prod": "dotenv -e .prod.vars -- mikro-orm-esm --config app/.server/db/config.ts migration:up"
+    "migrate:create": "dotenv -e .env -- mikro-orm-esm migration:create --config app/.server/db/config.ts",
+    "migrate:up:dev": "dotenv -e .env -- mikro-orm-esm migration:up --config app/.server/db/config.ts",
+    "migrate:up:prod": "dotenv -e .env.prod -- mikro-orm-esm migration:up --config app/.server/db/config.ts",
+    "seeder:create": "dotenv -e .env -- mikro-orm-esm seeder:create DatabaseSeeder --config app/.server/db/config.ts",
+    "seeder:run": "dotenv -e .env -- mikro-orm-esm seeder:run --config app/.server/db/config.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
-    "@mikro-orm/core": "^6.3.13",
-    "@mikro-orm/postgresql": "^6.3.13",
-    "@mikro-orm/reflection": "^6.3.13",
+    "@mikro-orm/core": "^6.4.0",
+    "@mikro-orm/postgresql": "^6.4.0",
+    "@mikro-orm/reflection": "^6.4.0",
+    "@mikro-orm/seeder": "^6.4.0",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -73,9 +76,9 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@mikro-orm/cli": "^6.3.13",
-    "@mikro-orm/entity-generator": "^6.3.13",
-    "@mikro-orm/migrations": "^6.3.13",
+    "@mikro-orm/cli": "^6.4.0",
+    "@mikro-orm/entity-generator": "^6.4.0",
+    "@mikro-orm/migrations": "^6.4.0",
     "@remix-run/dev": "^2.13.1",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",

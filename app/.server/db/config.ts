@@ -2,18 +2,19 @@ import "reflect-metadata";
 import { Migrator } from "@mikro-orm/migrations";
 import { Options, PostgreSqlDriver } from "@mikro-orm/postgresql";
 import { TsMorphMetadataProvider } from "@mikro-orm/reflection";
+import { SeedManager } from "@mikro-orm/seeder";
 
-import { Song } from "./entities/song.entity.js";
+import { entities } from "./entities/index.js";
 
 export const config: Options = {
   driver: PostgreSqlDriver,
-  entities: [Song],
+  entities: Object.values(entities),
   dbName: process.env.DATABASE_NAME,
   user: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
   host: process.env.DATABASE_HOST,
   metadataProvider: TsMorphMetadataProvider,
-  extensions: [Migrator],
+  extensions: [Migrator, SeedManager],
   schema: "public",
   discovery: { disableDynamicFileAccess: true },
   entityGenerator: {
