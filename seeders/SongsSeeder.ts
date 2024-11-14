@@ -10,8 +10,6 @@ import type { EntityManager } from "@mikro-orm/core";
 export class SongsSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     const d = data as types.Data;
-    await em.nativeDelete(entities.Sheet, {});
-    await em.nativeDelete(entities.Song, {});
 
     await em.upsertMany(
       entities.Song,
@@ -38,6 +36,9 @@ export class SongsSeeder extends Seeder {
           const sheets = song.sheets.map((sheet) => {
             const { type, difficulty, level, internalLevel, noteDesigner } =
               sheet;
+            if (!difficulty) {
+              console.log({ type, difficulty, level });
+            }
             return {
               type,
               song: song.songId as any,
@@ -68,6 +69,16 @@ export class SongsSeeder extends Seeder {
         onConflictAction: "merge",
         onConflictFields: ["song", "type", "difficulty"],
       }
+    );
+    const distinctCategoriesFromData = [
+      ...new Set(d.songs.map((song) => song.category)),
+    ];
+    await em.upsertMany(
+      entities.Category,
+      distinctCategoriesFromData.map((category) => ({
+        category,
+      })),
+      { onConflictAction: "ignore" }
     );
   }
 }
