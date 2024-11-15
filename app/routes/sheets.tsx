@@ -12,6 +12,7 @@ import { DataTable } from "~/components/data-table";
 import { Page } from "~/components/page";
 import { useUrlTableState } from "~/hooks/table";
 import { useOptimisticSearchParams } from "~/hooks/use-optimistic-search-params";
+import { diffColorMap } from "~/lib/colors";
 
 export const loader = withOrm(
   async ({ context, request }: LoaderFunctionArgs, orm) => {
@@ -24,34 +25,31 @@ export const loader = withOrm(
       throw new Response("limit must be less than 100", { status: 400 });
     }
 
-    const qb = orm.createQueryBuilder(entities.Song, "song");
-
+    const qb = orm.createQueryBuilder(entities.Sheet, "sheet");
     // Categories
     const category = searchParams.get("category");
     const categoriesFilter = category?.split(",").filter(Boolean) ?? [];
 
+    // console.log(categoriesFilter);
     if (categoriesFilter.length > 0) {
       qb.andWhere({
-        category: {
+        "song.category": {
           $in: categoriesFilter,
         },
       });
     }
-
     // Search
     if (search) {
       qb.andWhere({
-        title: {
-          $ilike: `%${search}%`,
-        },
+        song_id: { $ilike: `%${search}%` },
       });
     }
 
-    const orderBy = searchParams.get("sortBy") ?? "songId";
-    const dir = searchParams.get("dir") ?? "asc";
+    const orderBy = searchParams.get("sortBy") ?? "internalLevelValue";
+    const dir = `${searchParams.get("dir") || "desc"} nulls last`;
     qb.orderBy([{ [orderBy]: dir }]);
     qb.limit(limit).offset((page - 1) * limit);
-
+    qb.joinAndSelect("song", "song");
     // filters
     const filterOptions = {
       category: await orm
@@ -60,6 +58,7 @@ export const loader = withOrm(
     };
 
     const [data, count] = await qb.getResultAndCount();
+
     return {
       data,
       count,
@@ -89,27 +88,64 @@ export default function SongsPage() {
     () =>
       [
         {
-          accessorKey: "songId",
+          id: "song",
+          accessorKey: "song",
           header: "Title",
           cell: ({ row }) => (
-            <Link to={`/song/${row.original.title}`}>
-              <div className="text-xs">{row.original.songId}</div>
+            <Link to={`/song/${row.original.song?.title}`}>
+              <div
+                className="text-xs"
+                style={{
+                  color: diffColorMap[row.original.difficulty],
+                }}
+              >
+                {row.original?.song.songId}
+              </div>
             </Link>
           ),
         },
         {
-          accessorKey: "category",
+          id: "song.category",
+          accessorKey: "song.category",
           header: "Category",
           cell: ({ row }) => (
-            <div className="text-xs">{row.getValue("category")}</div>
+            <div className="text-xs">{row.original.song?.category}</div>
           ),
         },
         {
-          accessorKey: "bpm",
+          id: "song.bpm",
+          accessorKey: "song.bpm",
           header: "BPM",
-          cell: ({ row }) => <div className="text-xs">{row.original.bpm}</div>,
+          cell: ({ row }) => (
+            <div className="text-xs">{row.original.song?.bpm}</div>
+          ),
         },
-      ] as ColumnDef<any>[],
+
+        {
+          id: "difficulty",
+          accessorKey: "difficulty",
+          header: "Diff",
+          enableSorting: false,
+          cell: ({ row }) => (
+            <div
+              className="text-xs font-bold uppercase"
+              style={{
+                color: diffColorMap[row.original.difficulty],
+              }}
+            >
+              {row.original.difficulty}
+            </div>
+          ),
+        },
+        {
+          id: "internalLevelValue",
+          accessorKey: "internalLevelValue",
+          header: "Const",
+          cell: ({ row }) => (
+            <div className="text-xs">{row.original.internalLevelValue}</div>
+          ),
+        },
+      ] as ColumnDef<(typeof data)[0]>[],
     []
   );
 
@@ -148,7 +184,7 @@ export default function SongsPage() {
           data={data ?? []}
           columns={columns}
           onRowClick={(row) => {
-            navigate(`/song/${row.getValue("songId")}`);
+            navigate(`/song/${row.original.song.songId}`);
           }}
           rowCount={count}
           filters={[

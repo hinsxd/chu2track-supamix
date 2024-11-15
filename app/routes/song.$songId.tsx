@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { diffColorMap } from "~/lib/colors";
 
 const BASE_IMAGE_URL =
   "https://dp4p6x0xfi5o9.cloudfront.net/chunithm/img/cover/";
@@ -46,13 +47,6 @@ export const loader = withOrm(
     };
   }
 );
-
-const diffColorMap: Record<string, string> = {
-  basic: "#5d5",
-  advanced: "#fa0",
-  expert: "#f11",
-  master: "#a0a",
-};
 
 export default function SongPage() {
   const { song, sheets } = useLoaderData<typeof loader>();

@@ -211,8 +211,8 @@ export function DataTable<T>({
                 <TableRow
                   key={row.id}
                   className={cn(
-                    onRowClick &&
-                      "cursor-pointer max-sm:grid max-sm:grid-cols-3 max-sm:gap-x-4 max-sm:gap-y-2"
+                    onRowClick && "cursor-pointer",
+                    "max-sm:grid max-sm:grid-cols-3 max-sm:gap-1"
                   )}
                   onClick={() => onRowClick?.(row)}
                 >
@@ -284,7 +284,7 @@ const Filters = ({ filters }: { filters?: Filter[] }) => {
               options,
             } = filter;
             return (
-              <div>
+              <div key={filter.label}>
                 <div className="text-sm font-medium text-muted-foreground">
                   {label}
                 </div>
@@ -311,7 +311,7 @@ const Filters = ({ filters }: { filters?: Filter[] }) => {
           case "multiselect": {
             const { filterType: _, multiSelectProps } = filter;
             return (
-              <div>
+              <div key={filter.label}>
                 <div className="text-sm font-medium text-muted-foreground">
                   {multiSelectProps.label}
                 </div>
@@ -325,7 +325,7 @@ const Filters = ({ filters }: { filters?: Filter[] }) => {
           case "text": {
             const { filterType: _, label, inputProps } = filter;
             return (
-              <div>
+              <div key={filter.label}>
                 <div className="text-sm font-medium text-muted-foreground">
                   {label}
                 </div>
