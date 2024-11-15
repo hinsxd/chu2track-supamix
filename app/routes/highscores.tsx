@@ -13,7 +13,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Song } from "~/.server/db/entities/song.entity";
 import { withOrm } from "~/.server/db/withOrm";
 import { DataTable } from "~/components/data-table";
-import { Page } from "~/components/page";
 
 export const loader = withOrm(
   async ({ context, request }: LoaderFunctionArgs, orm) => {
@@ -91,7 +90,7 @@ export default function HighscoresPage() {
   );
 
   return (
-    <Page>
+    <div>
       <DataTable
         data={data ?? []}
         columns={columns}
@@ -111,6 +110,6 @@ export default function HighscoresPage() {
           navigate(`/song/${row.getValue("songId")}`);
         }}
       />
-    </Page>
+    </div>
   );
 }

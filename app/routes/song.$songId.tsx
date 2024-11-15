@@ -3,7 +3,6 @@ import { data, useLoaderData } from "@remix-run/react";
 
 import { Song } from "~/.server/db/entities/song.entity";
 import { withOrm } from "~/.server/db/withOrm";
-import { Page } from "~/components/page";
 import {
   Table,
   TableBody,
@@ -62,7 +61,7 @@ export default function SongPage() {
   } = song;
 
   return (
-    <Page>
+    <div>
       <div className="flex gap-4 md:gap-8">
         <img
           src={`${BASE_IMAGE_URL}${imageName}`}
@@ -114,6 +113,6 @@ export default function SongPage() {
           </TableBody>
         </Table>
       </div>
-    </Page>
+    </div>
   );
 }

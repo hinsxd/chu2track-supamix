@@ -9,7 +9,6 @@ import { useDebounce } from "react-use";
 import { entities } from "~/.server/db/entities";
 import { withOrm } from "~/.server/db/withOrm";
 import { DataTable } from "~/components/data-table";
-import { Page } from "~/components/page";
 import { useUrlTableState } from "~/hooks/table";
 import { useOptimisticSearchParams } from "~/hooks/use-optimistic-search-params";
 import { diffColorMap } from "~/lib/colors";
@@ -178,7 +177,7 @@ export default function SongsPage() {
   );
 
   return (
-    <Page>
+    <div>
       <Suspense fallback={<div>Loading...</div>}>
         <DataTable
           data={data ?? []}
@@ -219,6 +218,6 @@ export default function SongsPage() {
           {...tableState}
         />
       </Suspense>
-    </Page>
+    </div>
   );
 }

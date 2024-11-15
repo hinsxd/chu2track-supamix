@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData, useNavigate } from "@remix-run/react";
@@ -9,7 +9,6 @@ import { useDebounce } from "react-use";
 import { entities } from "~/.server/db/entities";
 import { withOrm } from "~/.server/db/withOrm";
 import { DataTable } from "~/components/data-table";
-import { Page } from "~/components/page";
 import { useUrlTableState } from "~/hooks/table";
 import { useOptimisticSearchParams } from "~/hooks/use-optimistic-search-params";
 
@@ -142,47 +141,45 @@ export default function SongsPage() {
   );
 
   return (
-    <Page>
-      <Suspense fallback={<div>Loading...</div>}>
-        <DataTable
-          data={data ?? []}
-          columns={columns}
-          onRowClick={(row) => {
-            navigate(`/song/${row.getValue("songId")}`);
-          }}
-          rowCount={count}
-          filters={[
-            {
-              filterType: "multiselect",
+    <div>
+      <DataTable
+        data={data ?? []}
+        columns={columns}
+        onRowClick={(row) => {
+          navigate(`/song/${row.getValue("songId")}`);
+        }}
+        rowCount={count}
+        filters={[
+          {
+            filterType: "multiselect",
+            label: "Category",
+            multiSelectProps: {
+              options: filterOptions.category.map((category) => ({
+                label: category,
+                value: category,
+              })),
               label: "Category",
-              multiSelectProps: {
-                options: filterOptions.category.map((category) => ({
-                  label: category,
-                  value: category,
-                })),
-                label: "Category",
-                triggerLabel: "Select category",
-                value: searchParams.get("category")?.split(","),
-                onValueChange: (v) => {
-                  applySearchParams("category", v.join(","));
-                },
+              triggerLabel: "Select category",
+              value: searchParams.get("category")?.split(","),
+              onValueChange: (v) => {
+                applySearchParams("category", v.join(","));
               },
             },
-            {
-              filterType: "text",
-              label: "Title",
-              inputProps: {
-                value: search,
-                onChange: (e) => {
-                  console.log("onchange");
-                  setSearch(e.target.value);
-                },
+          },
+          {
+            filterType: "text",
+            label: "Title",
+            inputProps: {
+              value: search,
+              onChange: (e) => {
+                console.log("onchange");
+                setSearch(e.target.value);
               },
             },
-          ]}
-          {...tableState}
-        />
-      </Suspense>
-    </Page>
+          },
+        ]}
+        {...tableState}
+      />
+    </div>
   );
 }

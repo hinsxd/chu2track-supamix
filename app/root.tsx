@@ -8,9 +8,8 @@ import {
 } from "@remix-run/react";
 
 import "./tailwind.css";
-import { useRef } from "react";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Page } from "~/components/page";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -35,7 +34,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <PageLayout>{children}</PageLayout>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -43,11 +42,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+export const PageLayout = ({ children }: { children: React.ReactNode }) => {
+  return <Page>{children}</Page>;
+};
+
 export default function App() {
-  const queryClient = useRef(new QueryClient()).current;
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Outlet />
-    </QueryClientProvider>
-  );
+  return <Outlet />;
 }

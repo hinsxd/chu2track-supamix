@@ -8,17 +8,13 @@ import { startTransition, StrictMode } from "react";
 
 import { RemixBrowser } from "@remix-run/react";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { hydrateRoot } from "react-dom/client";
 
-const queryClient = new QueryClient();
 startTransition(() => {
   hydrateRoot(
     document,
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <RemixBrowser />
-      </QueryClientProvider>
+      <RemixBrowser />
     </StrictMode>
   );
 });

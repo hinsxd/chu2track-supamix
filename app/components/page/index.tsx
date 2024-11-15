@@ -6,7 +6,13 @@ export const Page = ({
   ...props
 }: React.ComponentProps<"div">) => {
   return (
-    <div className={cn("flex flex-col px-8 py-6", className)} {...props}>
+    <div
+      className={cn(
+        "mx-auto flex max-w-screen-lg flex-col px-8 py-6",
+        className
+      )}
+      {...props}
+    >
       {children}
     </div>
   );
