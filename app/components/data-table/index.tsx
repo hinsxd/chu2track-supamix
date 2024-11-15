@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ComponentProps, useState } from "react";
 
 import {
   ColumnDef,
@@ -14,8 +14,20 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { MultiSelect } from "~/components/ui/multi-select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import {
   Table,
   TableBody,
@@ -25,6 +37,30 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { cn } from "~/lib/utils";
+
+interface FilterBase {
+  label: string;
+}
+
+type MultiSelectFilter = FilterBase & {
+  filterType: "multiselect";
+  multiSelectProps: ComponentProps<typeof MultiSelect>;
+};
+
+type SelectFilter = FilterBase & {
+  filterType: "select";
+  options: { group: string; items: { label: string; value: string }[] }[];
+  selectProps?: ComponentProps<typeof Select>;
+  triggerProps?: ComponentProps<typeof SelectTrigger>;
+  placeholder?: string;
+};
+
+type TextFilter = FilterBase & {
+  filterType: "text";
+  inputProps?: ComponentProps<typeof Input>;
+};
+
+type Filter = SelectFilter | MultiSelectFilter | TextFilter;
 
 type DataTableProps<T> = {
   data: T[];
@@ -36,6 +72,7 @@ type DataTableProps<T> = {
   onPaginationChange?: OnChangeFn<PaginationState>;
   sorting?: SortingState;
   onSortingChange?: OnChangeFn<SortingState>;
+  filters?: Filter[];
 };
 
 export function DataTable<T>({
@@ -48,6 +85,7 @@ export function DataTable<T>({
   sorting,
   onSortingChange,
   onRowClick,
+  filters,
 }: DataTableProps<T>) {
   const [fallbackSorting, setFallbackSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -59,7 +97,7 @@ export function DataTable<T>({
   );
 
   const manualPagination = !!pagination;
-
+  const manualSorting = !!sorting;
   const table = useReactTable({
     data,
     columns,
@@ -68,11 +106,12 @@ export function DataTable<T>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+
     manualPagination,
-
     onPaginationChange: onPaginationChange || setFallbackPagination,
-    onSortingChange: onSortingChange || setFallbackSorting,
 
+    manualSorting,
+    onSortingChange: onSortingChange || setFallbackSorting,
     pageCount,
     rowCount,
     state: {
@@ -100,7 +139,8 @@ export function DataTable<T>({
   return (
     <div className="w-full">
       {title}
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 py-4">
+        <Filters filters={filters} />
         <div className="space-x-2">
           <Button
             variant="outline"
@@ -123,7 +163,7 @@ export function DataTable<T>({
 
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHeader className="max-sm:hidden">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -135,7 +175,7 @@ export function DataTable<T>({
                         <div
                           className={
                             header.column.getCanSort()
-                              ? "cursor-pointer select-none"
+                              ? "flex cursor-pointer select-none items-center gap-2"
                               : ""
                           }
                           onClick={header.column.getToggleSortingHandler()}
@@ -154,8 +194,8 @@ export function DataTable<T>({
                             header.getContext()
                           )}
                           {{
-                            asc: " 🔼",
-                            desc: " 🔽",
+                            asc: <ArrowUpIcon className="size-4" />,
+                            desc: <ArrowDownIcon className="size-4" />,
                           }[header.column.getIsSorted() as string] ?? null}
                         </div>
                       )}
@@ -170,11 +210,20 @@ export function DataTable<T>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className={cn(onRowClick && "cursor-pointer")}
+                  className={cn(
+                    onRowClick &&
+                      "cursor-pointer max-sm:grid max-sm:grid-cols-3 max-sm:gap-x-4 max-sm:gap-y-2"
+                  )}
                   onClick={() => onRowClick?.(row)}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                  {row.getVisibleCells().map((cell, i) => (
+                    <TableCell key={cell.id} className="max-sm:block">
+                      <div className="text-[10px] text-muted-foreground sm:hidden">
+                        {flexRender(
+                          table.getVisibleFlatColumns()[i].columnDef.header,
+                          table.getFlatHeaders()[i].getContext()
+                        )}
+                      </div>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -219,3 +268,73 @@ export function DataTable<T>({
     </div>
   );
 }
+
+const Filters = ({ filters }: { filters?: Filter[] }) => {
+  return (
+    <div className="flex flex-row items-center gap-2">
+      {filters?.map((filter) => {
+        switch (filter.filterType) {
+          case "select": {
+            const {
+              filterType: _,
+              label,
+              triggerProps,
+              selectProps,
+              placeholder,
+              options,
+            } = filter;
+            return (
+              <div>
+                <div className="text-sm font-medium text-muted-foreground">
+                  {label}
+                </div>
+                <Select key={label} {...selectProps}>
+                  <SelectTrigger {...triggerProps}>
+                    <SelectValue placeholder={placeholder} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {options.map(({ group, items }) => (
+                      <SelectGroup key={group}>
+                        <SelectLabel>{group}</SelectLabel>
+                        {items.map(({ label, value }) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            );
+          }
+          case "multiselect": {
+            const { filterType: _, multiSelectProps } = filter;
+            return (
+              <div>
+                <div className="text-sm font-medium text-muted-foreground">
+                  {multiSelectProps.label}
+                </div>
+                <MultiSelect
+                  key={multiSelectProps.label}
+                  {...multiSelectProps}
+                />
+              </div>
+            );
+          }
+          case "text": {
+            const { filterType: _, label, inputProps } = filter;
+            return (
+              <div>
+                <div className="text-sm font-medium text-muted-foreground">
+                  {label}
+                </div>
+                <Input key={label} {...inputProps} />
+              </div>
+            );
+          }
+        }
+      })}
+    </div>
+  );
+};
