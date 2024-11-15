@@ -92,7 +92,7 @@ export default function SongsPage() {
           header: "Title",
           cell: ({ row }) => (
             <Link to={`/song/${row.original.title}`}>
-              <div className="text-xs">{row.original.songId}</div>
+              <div className="text-xs font-bold">{row.original.songId}</div>
             </Link>
           ),
         },

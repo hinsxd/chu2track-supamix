@@ -4,7 +4,7 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  @apply bg-white dark:bg-gray-950 min-h-screen;
 
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
@@ -46,6 +46,12 @@ body {
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --diff-basic: 120 67 60%;
+    --diff-advanced: 40 100 50%;
+    --diff-expert: 0 100 53%;
+    --diff-master: 300 100 33%;
+    --diff-ultima: 0 0% 100%;
   }
   .dark {
     --background: 224 71.4% 4.1%;
@@ -80,6 +86,12 @@ body {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --diff-basic: 120 67% 60%;
+    --diff-advanced: 40 100% 50%;
+    --diff-expert: 0 100% 53%;
+    --diff-master: 300 100% 60%;
+    --diff-ultima: 0 0% 100%;
   }
 }
 

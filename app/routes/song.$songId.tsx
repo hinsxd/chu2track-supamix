@@ -11,7 +11,8 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { diffColorMap } from "~/lib/colors";
+import { diffColorClassMap } from "~/lib/colors";
+import { cn } from "~/lib/utils";
 
 const BASE_IMAGE_URL =
   "https://dp4p6x0xfi5o9.cloudfront.net/chunithm/img/cover/";
@@ -98,10 +99,10 @@ export default function SongPage() {
             {sheets.map((sheet) => (
               <TableRow key={sheet.difficulty}>
                 <TableCell
-                  className="text-center font-bold uppercase"
-                  style={{
-                    color: diffColorMap[sheet.difficulty],
-                  }}
+                  className={cn(
+                    "text-center font-bold uppercase",
+                    diffColorClassMap[sheet.difficulty]
+                  )}
                 >
                   {sheet.difficulty}
                 </TableCell>

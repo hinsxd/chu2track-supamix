@@ -23,6 +23,14 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
+        diff: {
+          basic: "hsl(var(--diff-basic))",
+          advanced: "hsl(var(--diff-advanced))",
+          expert: "hsl(var(--diff-expert))",
+          master: "hsl(var(--diff-master))",
+          ultima: "hsl(var(--diff-ultima))",
+        },
+
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

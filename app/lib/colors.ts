@@ -1,7 +1,7 @@
-export const diffColorMap: Record<string, string> = {
-  basic: "#5d5",
-  advanced: "#fa0",
-  expert: "#f11",
-  master: "#a0a",
-  ultima: "#000",
+export const diffColorClassMap: Record<string, string> = {
+  basic: "text-diff-basic",
+  advanced: "text-diff-advanced",
+  expert: "text-diff-expert",
+  master: "text-diff-master",
+  ultima: "text-diff-ultima",
 };

@@ -11,7 +11,8 @@ import { withOrm } from "~/.server/db/withOrm";
 import { DataTable } from "~/components/data-table";
 import { useUrlTableState } from "~/hooks/table";
 import { useOptimisticSearchParams } from "~/hooks/use-optimistic-search-params";
-import { diffColorMap } from "~/lib/colors";
+import { diffColorClassMap } from "~/lib/colors";
+import { cn } from "~/lib/utils";
 
 export const loader = withOrm(
   async ({ context, request }: LoaderFunctionArgs, orm) => {
@@ -93,10 +94,10 @@ export default function SongsPage() {
           cell: ({ row }) => (
             <Link to={`/song/${row.original.song?.title}`}>
               <div
-                className="text-xs"
-                style={{
-                  color: diffColorMap[row.original.difficulty],
-                }}
+                className={cn(
+                  "text-xs font-bold",
+                  diffColorClassMap[row.original.difficulty]
+                )}
               >
                 {row.original?.song.songId}
               </div>
@@ -127,10 +128,10 @@ export default function SongsPage() {
           enableSorting: false,
           cell: ({ row }) => (
             <div
-              className="text-xs font-bold uppercase"
-              style={{
-                color: diffColorMap[row.original.difficulty],
-              }}
+              className={cn(
+                "text-xs font-bold uppercase",
+                diffColorClassMap[row.original.difficulty]
+              )}
             >
               {row.original.difficulty}
             </div>
