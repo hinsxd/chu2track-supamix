@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { Entity, PrimaryKey } from "@mikro-orm/core";
 
 @Entity()
