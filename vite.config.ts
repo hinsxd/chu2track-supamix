@@ -25,4 +25,7 @@ export default defineConfig({
   ssr: {
     noExternal: ["react-use"],
   },
+  build: {
+    target: "esnext",
+  },
 });
