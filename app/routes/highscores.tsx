@@ -1,114 +1,153 @@
 import { useMemo } from "react";
 
-import { LoaderFunctionArgs } from "@remix-run/node";
-import {
-  Link,
-  useLoaderData,
-  useNavigate,
-  useSearchParams,
-} from "@remix-run/react";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 
 import { ColumnDef } from "@tanstack/react-table";
+import { LoaderFunctionArgs } from "@vercel/remix";
 
-import { Song } from "~/.server/db/entities/song.entity";
+import { entities } from "~/.server/db/entities";
 import { withOrm } from "~/.server/db/withOrm";
+import { ComboBadge } from "~/components/badges/combo";
+import { ScoreBadge } from "~/components/badges/score";
 import { DataTable } from "~/components/data-table";
+import { useUrlTableState } from "~/hooks/table";
 
 export const loader = withOrm(
   async ({ context, request }: LoaderFunctionArgs, orm) => {
-    const page = parseInt(
-      new URL(request.url).searchParams.get("pageIndex") ?? "1"
-    );
-    const limit = parseInt(
-      new URL(request.url).searchParams.get("pageSize") ?? "10"
-    );
+    const searchParams = new URL(request.url).searchParams;
+    const page = parseInt(searchParams.get("page") ?? "1");
+    const limit = parseInt(searchParams.get("limit") ?? "25");
+
+    const search = searchParams.get("search");
     if (limit > 100) {
       throw new Response("limit must be less than 100", { status: 400 });
     }
-    const orderBy = new URL(request.url).searchParams.get("orderBy") ?? "title";
-    const dir = new URL(request.url).searchParams.get("dir") ?? "asc";
 
-    const [data, count] = await orm.findAndCount(
-      Song,
-      {},
+    const qb = orm.createQueryBuilder(entities.Highscore);
+    // Categories
+    const category = searchParams.get("category");
+    const categoriesFilter = category?.split(",").filter(Boolean) ?? [];
+
+    // console.log(categoriesFilter);
+    if (categoriesFilter.length > 0) {
+      qb.andWhere({
+        "song.category": {
+          $in: categoriesFilter,
+        },
+      });
+    }
+    // Search
+    if (search) {
+      qb.andWhere({
+        song_id: { $ilike: `%${search}%` },
+      });
+    }
+
+    const orderBy = searchParams.get("sortBy") || "rating";
+    const dir = `${searchParams.get("dir") || "desc"} nulls last`;
+
+    qb.orderBy([
       {
-        offset: (page - 1) * limit,
-        limit: limit,
-        orderBy: [{ [orderBy]: dir }],
-      }
-    );
+        [orderBy]: dir,
+      },
+    ]);
+    qb.limit(limit).offset((page - 1) * limit);
+    qb.joinAndSelect("song", "song");
+    qb.joinAndSelect("sheet", "sheet");
+    // filters
+    const filterOptions = {
+      category: await orm
+        .findAll(entities.Category)
+        .then((categories) => categories.map((category) => category.category)),
+    };
+
+    const [data, count] = await qb.getResultAndCount();
 
     return {
       data,
       count,
       page,
       limit,
-      maxPage: Math.ceil(count / limit),
+      filterOptions,
     };
   }
 );
 
 export default function HighscoresPage() {
   const navigate = useNavigate();
-  const { data, maxPage, count, page, limit } = useLoaderData<typeof loader>();
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const pagination = {
-    pageIndex: parseInt(searchParams.get("pageIndex") ?? `${page - 1}`),
-    pageSize: parseInt(searchParams.get("pageSize") ?? `${limit}`),
-  };
-
+  const { data, count, page, limit, filterOptions } =
+    useLoaderData<typeof loader>();
   const columns = useMemo(
     () =>
       [
         {
-          accessorKey: "category",
-          header: "Category",
+          id: "song.songId",
+          accessorKey: "song.songId",
+
+          header: "Song",
           cell: ({ row }) => (
-            <div className="text-xs">{row.getValue("category")}</div>
+            <div>
+              <div className="text-sm font-semibold text-white">
+                {row.original.song?.songId}
+              </div>
+              <div className="text-xs font-light text-gray-400">
+                {row.original.song?.category}
+              </div>
+            </div>
           ),
         },
         {
-          accessorKey: "songId",
-          header: "songId",
-          cell: ({ row }) => (
-            <Link to={`/song/${row.getValue("songId")}`}>
-              <div className="text-xs">{row.getValue("songId")}</div>
-            </Link>
+          size: 200,
+          accessorKey: "score",
+          header: "Score",
+          cell: ({ getValue, row }) => (
+            <div className="flex flex-col gap-1 text-xs md:flex-row md:items-center">
+              <span className="text-sm font-medium text-white">
+                {row.original.score.toLocaleString("en-US")}
+              </span>
+              <div className="flex gap-2">
+                <ScoreBadge {...row.original} />
+                <ComboBadge {...row.original} />
+              </div>
+            </div>
           ),
         },
         {
           size: 100,
-          accessorKey: "bpm",
-          header: "BPM",
-          cell: ({ row }) => (
-            <div className="text-xs">{row.getValue("bpm")}</div>
+          accessorKey: "rating",
+          header: "Rating",
+          cell: ({ getValue, row }) => (
+            <div>
+              <span className="text-sm font-medium text-gray-300">
+                {row.original.rating}
+              </span>
+              {" / "}
+              <span className="text-xs text-gray-400">
+                {row.original.sheet?.internalLevelValue}
+              </span>
+            </div>
           ),
         },
       ] as ColumnDef<(typeof data)[number]>[],
     []
   );
 
+  const tableState = useUrlTableState({
+    pagination: {
+      pageIndex: page,
+      pageSize: limit,
+    },
+  });
   return (
     <div>
       <DataTable
         data={data ?? []}
         columns={columns}
-        pagination={pagination}
-        onPaginationChange={(p) => {
-          if (typeof p === "function") {
-            const newPagination = p(pagination);
-            setSearchParams({
-              pageIndex: (newPagination.pageIndex + 1).toString(),
-              pageSize: newPagination.pageSize.toString(),
-            });
-          }
-        }}
-        pageCount={maxPage}
         rowCount={count}
         onRowClick={(row) => {
-          navigate(`/song/${row.getValue("songId")}`);
+          navigate(`/song/${encodeURIComponent(row.original.song!.songId)}`);
         }}
+        {...tableState}
       />
     </div>
   );

@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData, useNavigate } from "@remix-run/react";
 
 import { ColumnDef } from "@tanstack/react-table";
+import { LoaderFunctionArgs } from "@vercel/remix";
 import { useDebounce } from "react-use";
 
 import { entities } from "~/.server/db/entities";
@@ -146,7 +146,7 @@ export default function SongsPage() {
         data={data ?? []}
         columns={columns}
         onRowClick={(row) => {
-          navigate(`/song/${row.getValue("songId")}`);
+          navigate(`/song/${encodeURIComponent(row.getValue("songId"))}`);
         }}
         rowCount={count}
         filters={[

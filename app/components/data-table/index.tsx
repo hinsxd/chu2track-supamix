@@ -163,7 +163,7 @@ export function DataTable<T>({
 
       <div className="rounded-md border">
         <Table>
-          <TableHeader className="max-sm:hidden">
+          <TableHeader className="max-md:hidden">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -212,13 +212,13 @@ export function DataTable<T>({
                   key={row.id}
                   className={cn(
                     onRowClick && "cursor-pointer",
-                    "max-sm:grid max-sm:grid-cols-3 max-sm:gap-1"
+                    "max-md:grid max-md:grid-cols-2 max-md:gap-1"
                   )}
                   onClick={() => onRowClick?.(row)}
                 >
                   {row.getVisibleCells().map((cell, i) => (
-                    <TableCell key={cell.id} className="max-sm:block">
-                      <div className="text-[10px] text-muted-foreground sm:hidden">
+                    <TableCell key={cell.id} className="max-md:block">
+                      <div className="hidden text-[10px] text-muted-foreground max-md:block">
                         {flexRender(
                           table.getVisibleFlatColumns()[i].columnDef.header,
                           table.getFlatHeaders()[i].getContext()
@@ -315,10 +315,7 @@ const Filters = ({ filters }: { filters?: Filter[] }) => {
                 <div className="text-sm font-medium text-muted-foreground">
                   {multiSelectProps.label}
                 </div>
-                <MultiSelect
-                  key={multiSelectProps.label}
-                  {...multiSelectProps}
-                />
+                <MultiSelect {...multiSelectProps} />
               </div>
             );
           }

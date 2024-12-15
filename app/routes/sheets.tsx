@@ -1,9 +1,9 @@
 import { Suspense, useCallback, useMemo, useState } from "react";
 
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 
 import { ColumnDef } from "@tanstack/react-table";
+import { LoaderFunctionArgs } from "@vercel/remix";
 import { useDebounce } from "react-use";
 
 import { entities } from "~/.server/db/entities";
@@ -38,6 +38,16 @@ export const loader = withOrm(
         },
       });
     }
+    const diff = searchParams.get("diff");
+    const diffFilter = diff?.split(",").filter(Boolean) ?? [];
+
+    if (diffFilter.length > 0) {
+      qb.andWhere({
+        difficulty: {
+          $in: diffFilter,
+        },
+      });
+    }
     // Search
     if (search) {
       qb.andWhere({
@@ -47,7 +57,12 @@ export const loader = withOrm(
 
     const orderBy = searchParams.get("sortBy") ?? "internalLevelValue";
     const dir = `${searchParams.get("dir") || "desc"} nulls last`;
-    qb.orderBy([{ [orderBy]: dir }]);
+    qb.orderBy([
+      { [orderBy]: dir },
+      {
+        internalLevelValue: "ASC",
+      },
+    ]);
     qb.limit(limit).offset((page - 1) * limit);
     qb.joinAndSelect("song", "song");
     // filters
@@ -55,6 +70,7 @@ export const loader = withOrm(
       category: await orm
         .findAll(entities.Category)
         .then((categories) => categories.map((category) => category.category)),
+      difficulty: ["basic", "advanced", "expert", "master", "ultima"],
     };
 
     const [data, count] = await qb.getResultAndCount();
@@ -88,43 +104,26 @@ export default function SongsPage() {
     () =>
       [
         {
-          id: "song",
-          accessorKey: "song",
-          header: "Title",
+          id: "song.songId",
+          accessorKey: "song.songId",
+
+          header: "Song",
           cell: ({ row }) => (
-            <Link to={`/song/${row.original.song?.title}`}>
-              <div
-                className={cn(
-                  "text-xs font-bold",
-                  diffColorClassMap[row.original.difficulty]
-                )}
-              >
-                {row.original?.song.songId}
+            <div>
+              <div className="text-sm font-semibold text-white">
+                {row.original.song?.songId}
               </div>
-            </Link>
-          ),
-        },
-        {
-          id: "song.category",
-          accessorKey: "song.category",
-          header: "Category",
-          cell: ({ row }) => (
-            <div className="text-xs">{row.original.song?.category}</div>
-          ),
-        },
-        {
-          id: "song.bpm",
-          accessorKey: "song.bpm",
-          header: "BPM",
-          cell: ({ row }) => (
-            <div className="text-xs">{row.original.song?.bpm}</div>
+              <div className="text-xs font-light text-gray-400">
+                {row.original.song?.category}
+              </div>
+            </div>
           ),
         },
 
         {
           id: "difficulty",
           accessorKey: "difficulty",
-          header: "Diff",
+          header: "Difficulty",
           enableSorting: false,
           cell: ({ row }) => (
             <div
@@ -142,7 +141,20 @@ export default function SongsPage() {
           accessorKey: "internalLevelValue",
           header: "Const",
           cell: ({ row }) => (
-            <div className="text-xs">{row.original.internalLevelValue}</div>
+            <div className="text-sm">
+              {row.original.internalLevelValue}{" "}
+              <span className="text-xs font-light text-gray-400">
+                / {row.original.level}
+              </span>
+            </div>
+          ),
+        },
+        {
+          id: "song.bpm",
+          accessorKey: "song.bpm",
+          header: "BPM",
+          cell: ({ row }) => (
+            <div className="text-xs">{row.original.song?.bpm}</div>
           ),
         },
       ] as ColumnDef<(typeof data)[0]>[],
@@ -152,7 +164,7 @@ export default function SongsPage() {
   const applySearchParams = useCallback(
     (field: string, value?: string, clearPage = true) => {
       setSearchParams((prev) => {
-        if (value === undefined) {
+        if (!value) {
           prev.delete(field);
         } else {
           prev.set(field, value);
@@ -201,6 +213,22 @@ export default function SongsPage() {
                 value: searchParams.get("category")?.split(","),
                 onValueChange: (v) => {
                   applySearchParams("category", v.join(","));
+                },
+              },
+            },
+            {
+              filterType: "multiselect",
+              label: "Difficulty",
+              multiSelectProps: {
+                options: filterOptions.difficulty.map((difficulty) => ({
+                  label: difficulty[0].toUpperCase() + difficulty.slice(1),
+                  value: difficulty,
+                })),
+                label: "Difficulty",
+                triggerLabel: "Select difficulty",
+                value: searchParams.get("diff")?.split(",") || undefined,
+                onValueChange: (v) => {
+                  applySearchParams("diff", v.join(","));
                 },
               },
             },

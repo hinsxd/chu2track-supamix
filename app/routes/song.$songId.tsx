@@ -1,5 +1,6 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
 import { data, useLoaderData } from "@remix-run/react";
+
+import { LoaderFunctionArgs } from "@vercel/remix";
 
 import { Song } from "~/.server/db/entities/song.entity";
 import { withOrm } from "~/.server/db/withOrm";
@@ -20,6 +21,7 @@ const BASE_IMAGE_URL =
 export const loader = withOrm(
   async ({ context, request, params }: LoaderFunctionArgs, orm) => {
     const songId = params.songId as string;
+    console.log(songId);
     const song = await orm.findOne(
       Song,
       { songId },
@@ -32,6 +34,7 @@ export const loader = withOrm(
         },
       }
     );
+    console.log({ song });
     if (!song) {
       throw data(
         { notFound: true },

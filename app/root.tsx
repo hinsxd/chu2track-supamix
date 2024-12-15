@@ -1,4 +1,3 @@
-import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
   Meta,
@@ -8,6 +7,8 @@ import {
 } from "@remix-run/react";
 
 import "./tailwind.css";
+
+import { LinksFunction } from "@vercel/remix";
 
 import { PageLayout } from "~/components/page-layout";
 

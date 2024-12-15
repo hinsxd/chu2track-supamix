@@ -42,6 +42,17 @@ export const PageLayout = ({ children }: { children: React.ReactNode }) => {
             >
               Sheets
             </NavLink>
+            <NavLink
+              to="/highscores"
+              className={(state) =>
+                cn(
+                  state.isActive && "underline",
+                  "underline-offset-4 hover:underline"
+                )
+              }
+            >
+              Highscores
+            </NavLink>
           </div>
         </div>
       </div>

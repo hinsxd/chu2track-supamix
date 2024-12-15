@@ -10,6 +10,9 @@ export const config: Options = {
   driver: PostgreSqlDriver,
   entities: Object.values(entities),
   dbName: process.env.DATABASE_NAME,
+  port: process.env.DATABASE_PORT
+    ? parseInt(process.env.DATABASE_PORT)
+    : undefined,
   user: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
   host: process.env.DATABASE_HOST,

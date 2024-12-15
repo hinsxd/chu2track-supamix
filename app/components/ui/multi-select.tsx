@@ -1,7 +1,5 @@
 import { useCallback, useRef, useState } from "react";
 
-import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
-
 import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -11,8 +9,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-
-type Checked = DropdownMenuCheckboxItemProps["checked"];
 
 export type MultiSelectProps = React.ComponentProps<typeof DropdownMenu> & {
   triggerLabel: string;
@@ -56,7 +52,13 @@ export function MultiSelect({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">{triggerLabel}</Button>
+        <Button variant="outline">
+          {value.length >= 2
+            ? `${value.length} selected`
+            : value.length
+              ? `${value[0]}`
+              : triggerLabel}
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>{label}</DropdownMenuLabel>
