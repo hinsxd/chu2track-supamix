@@ -52,7 +52,7 @@ export function MultiSelect({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="w-full justify-start">
           {value.length >= 2
             ? `${value.length} selected`
             : value.length

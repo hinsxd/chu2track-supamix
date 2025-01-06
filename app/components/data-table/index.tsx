@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { Slider } from "~/components/ui/slider";
 import {
   Table,
   TableBody,
@@ -60,7 +61,12 @@ type TextFilter = FilterBase & {
   inputProps?: ComponentProps<typeof Input>;
 };
 
-type Filter = SelectFilter | MultiSelectFilter | TextFilter;
+type SliderFilter = FilterBase & {
+  filterType: "slider";
+  sliderProps?: ComponentProps<typeof Slider>;
+};
+
+type Filter = SelectFilter | MultiSelectFilter | TextFilter | SliderFilter;
 
 type DataTableProps<T> = {
   data: T[];
@@ -134,31 +140,34 @@ export function DataTable<T>({
     max
   );
 
-  const title = `Showing ${pageStart} to ${pageEnd} of ${max} rows`;
+  const paginationStr = `${pageStart} - ${pageEnd} / ${max}`;
 
+  const paginationRow = (
+    <div className="space-x-2">
+      <span className="text-sm font-medium text-gray-400">{paginationStr}</span>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => table.previousPage()}
+        disabled={!table.getCanPreviousPage()}
+      >
+        Previous
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => table.nextPage()}
+        disabled={!table.getCanNextPage()}
+      >
+        Next
+      </Button>
+    </div>
+  );
   return (
     <div className="w-full">
-      {title}
       <div className="flex flex-wrap items-center justify-between gap-2 py-4">
         <Filters filters={filters} />
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+        {paginationRow}
       </div>
 
       <div className="rounded-md border">
@@ -246,24 +255,7 @@ export function DataTable<T>({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+        {paginationRow}
       </div>
     </div>
   );
@@ -311,7 +303,7 @@ const Filters = ({ filters }: { filters?: Filter[] }) => {
           case "multiselect": {
             const { filterType: _, multiSelectProps } = filter;
             return (
-              <div key={filter.label}>
+              <div key={filter.label} className="min-w-28">
                 <div className="text-sm font-medium text-muted-foreground">
                   {multiSelectProps.label}
                 </div>
@@ -327,6 +319,30 @@ const Filters = ({ filters }: { filters?: Filter[] }) => {
                   {label}
                 </div>
                 <Input key={label} {...inputProps} />
+              </div>
+            );
+          }
+          case "slider": {
+            const { filterType: _, label, sliderProps } = filter;
+            return (
+              <div
+                key={filter.label}
+                className="flex min-w-28 flex-col self-stretch"
+              >
+                <div className="text-sm font-medium text-muted-foreground">
+                  {label}
+                </div>
+                <div className="my-auto">
+                  <Slider key={label} {...sliderProps} />
+                </div>
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-xs font-light text-gray-400">
+                    {sliderProps?.value?.[0]}
+                  </span>
+                  <span className="text-xs font-light text-gray-400">
+                    {sliderProps?.value?.[1]}
+                  </span>
+                </div>
               </div>
             );
           }

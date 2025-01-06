@@ -81,6 +81,16 @@ export default function HighscoresPage() {
     () =>
       [
         {
+          id: "rank",
+          accessorKey: "rank",
+          header: "Rank",
+          cell: ({ row }) => (
+            <div className="text-sm font-semibold text-white">
+              {row.index + 1 + (page - 1) * limit}
+            </div>
+          ),
+        },
+        {
           id: "song.songId",
           accessorKey: "song.songId",
 
@@ -121,15 +131,16 @@ export default function HighscoresPage() {
               <span className="text-sm font-medium text-gray-300">
                 {row.original.rating}
               </span>
-              {" / "}
+
               <span className="text-xs text-gray-400">
+                {" / "}
                 {row.original.sheet?.internalLevelValue}
               </span>
             </div>
           ),
         },
       ] as ColumnDef<(typeof data)[number]>[],
-    []
+    [limit, page]
   );
 
   const tableState = useUrlTableState({

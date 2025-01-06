@@ -21,17 +21,6 @@ export const PageLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
           <div className="flex items-center gap-4 max-sm:hidden">
             <NavLink
-              to="/songs"
-              className={(state) =>
-                cn(
-                  state.isActive && "underline",
-                  "underline-offset-4 hover:underline"
-                )
-              }
-            >
-              Songs
-            </NavLink>
-            <NavLink
               to="/sheets"
               className={(state) =>
                 cn(

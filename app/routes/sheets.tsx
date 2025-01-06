@@ -14,6 +14,8 @@ import { useOptimisticSearchParams } from "~/hooks/use-optimistic-search-params"
 import { diffColorClassMap } from "~/lib/colors";
 import { cn } from "~/lib/utils";
 
+const LEVEL_RANGE: [number, number] = [1, 15.5];
+
 export const loader = withOrm(
   async ({ context, request }: LoaderFunctionArgs, orm) => {
     const searchParams = new URL(request.url).searchParams;
@@ -52,6 +54,16 @@ export const loader = withOrm(
     if (search) {
       qb.andWhere({
         song_id: { $ilike: `%${search}%` },
+      });
+    }
+
+    const levelRange = searchParams.get("level")?.split(",").map(Number);
+    if (levelRange) {
+      qb.andWhere({
+        internalLevelValue: {
+          $gte: levelRange[0],
+          $lte: levelRange[1],
+        },
       });
     }
 
@@ -144,7 +156,7 @@ export default function SongsPage() {
             <div className="text-sm">
               {row.original.internalLevelValue}{" "}
               <span className="text-xs font-light text-gray-400">
-                / {row.original.level}
+                {row.original.level}
               </span>
             </div>
           ),
@@ -179,6 +191,7 @@ export default function SongsPage() {
   );
 
   const [search, setSearch] = useState(searchParams.get("search") ?? "");
+  const [levelRange, setLevelRange] = useState<[number, number]>(LEVEL_RANGE);
 
   useDebounce(
     () => {
@@ -187,6 +200,19 @@ export default function SongsPage() {
     },
     300,
     [search, searchParams.get("search")]
+  );
+  useDebounce(
+    () => {
+      if (searchParams.get("level") === levelRange.join(",")) return;
+      const [min, max] = levelRange;
+      if (min === LEVEL_RANGE[0] && max === LEVEL_RANGE[1]) {
+        applySearchParams("level", "");
+        return;
+      }
+      applySearchParams("level", levelRange.join(","));
+    },
+    300,
+    [levelRange, searchParams.get("level")]
   );
 
   return (
@@ -209,7 +235,7 @@ export default function SongsPage() {
                   value: category,
                 })),
                 label: "Category",
-                triggerLabel: "Select category",
+                triggerLabel: "All",
                 value: searchParams.get("category")?.split(","),
                 onValueChange: (v) => {
                   applySearchParams("category", v.join(","));
@@ -225,7 +251,7 @@ export default function SongsPage() {
                   value: difficulty,
                 })),
                 label: "Difficulty",
-                triggerLabel: "Select difficulty",
+                triggerLabel: "All",
                 value: searchParams.get("diff")?.split(",") || undefined,
                 onValueChange: (v) => {
                   applySearchParams("diff", v.join(","));
@@ -238,8 +264,21 @@ export default function SongsPage() {
               inputProps: {
                 value: search,
                 onChange: (e) => {
-                  console.log("onchange");
                   setSearch(e.target.value);
+                },
+              },
+            },
+            {
+              filterType: "slider",
+              label: "Level",
+              sliderProps: {
+                value: levelRange,
+                min: 1,
+                max: 15.5,
+                step: 0.1,
+
+                onValueChange: (v) => {
+                  setLevelRange(v as [number, number]);
                 },
               },
             },
