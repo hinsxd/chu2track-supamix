@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { useLoaderData, useNavigate } from "@remix-run/react";
 
@@ -191,7 +191,11 @@ export default function SongsPage() {
   );
 
   const [search, setSearch] = useState(searchParams.get("search") ?? "");
-  const [levelRange, setLevelRange] = useState<[number, number]>(LEVEL_RANGE);
+  const [levelRange, setLevelRange] = useState<[number, number]>(
+    searchParams.get("level")
+      ? (searchParams.get("level")?.split(",").map(Number) as [number, number])
+      : LEVEL_RANGE
+  );
 
   useDebounce(
     () => {
@@ -217,75 +221,73 @@ export default function SongsPage() {
 
   return (
     <div>
-      <Suspense fallback={<div>Loading...</div>}>
-        <DataTable
-          data={data ?? []}
-          columns={columns}
-          onRowClick={(row) => {
-            navigate(`/song/${row.original.song.songId}`);
-          }}
-          rowCount={count}
-          filters={[
-            {
-              filterType: "multiselect",
+      <DataTable
+        data={data ?? []}
+        columns={columns}
+        onRowClick={(row) => {
+          navigate(`/song/${row.original.song.songId}`);
+        }}
+        rowCount={count}
+        filters={[
+          {
+            filterType: "multiselect",
+            label: "Category",
+            multiSelectProps: {
+              options: filterOptions.category.map((category) => ({
+                label: category,
+                value: category,
+              })),
               label: "Category",
-              multiSelectProps: {
-                options: filterOptions.category.map((category) => ({
-                  label: category,
-                  value: category,
-                })),
-                label: "Category",
-                triggerLabel: "All",
-                value: searchParams.get("category")?.split(","),
-                onValueChange: (v) => {
-                  applySearchParams("category", v.join(","));
-                },
+              triggerLabel: "All",
+              value: searchParams.get("category")?.split(","),
+              onValueChange: (v) => {
+                applySearchParams("category", v.join(","));
               },
             },
-            {
-              filterType: "multiselect",
+          },
+          {
+            filterType: "multiselect",
+            label: "Difficulty",
+            multiSelectProps: {
+              options: filterOptions.difficulty.map((difficulty) => ({
+                label: difficulty[0].toUpperCase() + difficulty.slice(1),
+                value: difficulty,
+              })),
               label: "Difficulty",
-              multiSelectProps: {
-                options: filterOptions.difficulty.map((difficulty) => ({
-                  label: difficulty[0].toUpperCase() + difficulty.slice(1),
-                  value: difficulty,
-                })),
-                label: "Difficulty",
-                triggerLabel: "All",
-                value: searchParams.get("diff")?.split(",") || undefined,
-                onValueChange: (v) => {
-                  applySearchParams("diff", v.join(","));
-                },
+              triggerLabel: "All",
+              value: searchParams.get("diff")?.split(",") || undefined,
+              onValueChange: (v) => {
+                applySearchParams("diff", v.join(","));
               },
             },
-            {
-              filterType: "text",
-              label: "Title",
-              inputProps: {
-                value: search,
-                onChange: (e) => {
-                  setSearch(e.target.value);
-                },
+          },
+          {
+            filterType: "text",
+            label: "Title",
+            inputProps: {
+              value: search,
+              onChange: (e) => {
+                setSearch(e.target.value);
               },
             },
-            {
-              filterType: "slider",
-              label: "Level",
-              sliderProps: {
-                value: levelRange,
-                min: 1,
-                max: 15.5,
-                step: 0.1,
+          },
+          {
+            filterType: "slider",
+            label: "Level",
+            sliderProps: {
+              value: levelRange,
+              min: 1,
+              max: 15.5,
+              step: 0.1,
 
-                onValueChange: (v) => {
-                  setLevelRange(v as [number, number]);
-                },
+              onValueChange: (v) => {
+                setLevelRange(v as [number, number]);
               },
             },
-          ]}
-          {...tableState}
-        />
-      </Suspense>
+          },
+        ]}
+        {...tableState}
+      />
     </div>
   );
 }

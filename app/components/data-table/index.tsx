@@ -263,7 +263,7 @@ export function DataTable<T>({
 
 const Filters = ({ filters }: { filters?: Filter[] }) => {
   return (
-    <div className="flex flex-row items-center gap-2">
+    <div className="flex flex-row flex-wrap items-center gap-2">
       {filters?.map((filter) => {
         switch (filter.filterType) {
           case "select": {
@@ -332,7 +332,7 @@ const Filters = ({ filters }: { filters?: Filter[] }) => {
                 <div className="text-sm font-medium text-muted-foreground">
                   {label}
                 </div>
-                <div className="my-auto">
+                <div className="my-[0.5em]">
                   <Slider key={label} {...sliderProps} />
                 </div>
                 <div className="flex items-center justify-between px-1">

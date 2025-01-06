@@ -1,9 +1,6 @@
 import { NavLink } from "@remix-run/react";
 
-import { MenuIcon } from "lucide-react";
-
 import { Page } from "~/components/page";
-import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 
 export const PageLayout = ({ children }: { children: React.ReactNode }) => {
@@ -14,12 +11,13 @@ export const PageLayout = ({ children }: { children: React.ReactNode }) => {
           <div>
             <NavLink to="/">Chu2track</NavLink>
           </div>
-          <div className="sm:hidden">
+          {/* TODO: add mobile menu */}
+          {/* <div className="sm:hidden">
             <Button variant="ghost">
               <MenuIcon className="size-8" />
             </Button>
-          </div>
-          <div className="flex items-center gap-4 max-sm:hidden">
+          </div> */}
+          <div className="flex items-center gap-4">
             <NavLink
               to="/sheets"
               className={(state) =>
